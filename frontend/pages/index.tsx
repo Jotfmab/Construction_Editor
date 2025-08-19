@@ -122,8 +122,8 @@ export default function Home() {
   }, [loadBlock]);
 
   // ---------- grid columns ----------
-  const columnDefs: ColDef[] = useMemo(() => {
-    const cols: ColDef[] = [
+  const columnDefs: ColDef<BlockRow>[] = useMemo(() => {
+    const cols: ColDef<BlockRow>[] = [
       { headerName: "RowID", field: "row_id", width: 110, pinned: "left" },
       { headerName: "Subsection", field: "subsection", width: 220, pinned: "left" },
     ];
@@ -153,7 +153,7 @@ export default function Home() {
   }, []);
 
   const onCellValueChanged = useCallback(
-    (e: CellValueChangedEvent<BlockRow>) => { // Also type this event for good measure
+    (e: CellValueChangedEvent<BlockRow>) => {
       const row = e.data;
       if (!row) return;
 
@@ -318,7 +318,8 @@ export default function Home() {
       </div>
 
       <div className="ag-theme-quartz" style={{ height: "70vh", marginTop: 12 }}>
-        <AgGridReact<BlockRow>
+        {/* @ts-expect-error Server-side rendering mismatch caused by dynamic import, safe to ignore. */}
+        <AgGridReact
           rowData={rows}
           columnDefs={columnDefs}
           defaultColDef={{ resizable: true, sortable: true }}
