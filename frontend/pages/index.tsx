@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import type { ColDef, CellValueChangedEvent } from "ag-grid-community";
 import { api } from "../src/lib/api";
+import { AgGridReact as AgGridReactType } from "ag-grid-react"; // Import the type for AgGridReact
 
 // AG Grid (CSR only)
 const AgGridReact = dynamic(
@@ -37,7 +38,7 @@ export default function Home() {
   // --------- grid ----------
   const [rows, setRows] = useState<BlockRow[]>([]);
   const [changed, setChanged] = useState<Map<string, any>>(new Map());
-  const gridRef = useRef<any>(null);
+  const gridRef = useRef<AgGridReactType<BlockRow>>(null);
 
   // ---------- bootstrap ----------
   useEffect(() => {
