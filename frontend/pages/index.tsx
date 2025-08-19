@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
-import type { ColDef, CellValueChangedEvent } from "ag-grid-community";
+import type { ColDef, CellValueChangedEvent, GridApi } from "ag-grid-community";
 import { api } from "../src/lib/api";
-import { AgGridReact as AgGridReactType } from "ag-grid-react"; // Import the type for AgGridReact
 
 // AG Grid (CSR only)
 const AgGridReact = dynamic(
@@ -38,7 +37,7 @@ export default function Home() {
   // --------- grid ----------
   const [rows, setRows] = useState<BlockRow[]>([]);
   const [changed, setChanged] = useState<Map<string, any>>(new Map());
-  const gridRef = useRef<AgGridReactType<BlockRow>>(null);
+  const gridApiRef = useRef<GridApi<BlockRow> | null>(null);
 
   // ---------- bootstrap ----------
   useEffect(() => {
@@ -150,7 +149,11 @@ export default function Home() {
     return cols;
   }, [startDay, endDay]);
 
-  // ---------- change capture ----------
+  // ---------- grid events ----------
+  const onGridReady = useCallback((params: { api: GridApi<BlockRow> }) => {
+    gridApiRef.current = params.api;
+  }, []);
+
   const onCellValueChanged = useCallback(
     (e: CellValueChangedEvent) => {
       const row = e.data as BlockRow;
@@ -181,7 +184,7 @@ export default function Home() {
 
   const saveChanges = useCallback(async () => {
     // make sure the grid commits the current edit before we read the buffer
-    gridRef.current?.api?.stopEditing();
+    gridApiRef.current?.stopEditing();
 
     if (changed.size === 0) {
       alert("Nothing to save.");
@@ -317,11 +320,11 @@ export default function Home() {
 
       <div className="ag-theme-quartz" style={{ height: "70vh", marginTop: 12 }}>
         <AgGridReact
-          ref={gridRef}
           rowData={rows}
           columnDefs={columnDefs}
           defaultColDef={{ resizable: true, sortable: true }}
           animateRows
+          onGridReady={onGridReady}
           onCellValueChanged={onCellValueChanged}
           stopEditingWhenCellsLoseFocus
         />
