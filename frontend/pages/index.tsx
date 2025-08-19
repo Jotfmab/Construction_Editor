@@ -328,7 +328,6 @@ export default function Home() {
           onCellValueChanged={onCellValueChanged}
           stopEditingWhenCellsLoseFocus
         />
-        print"HI"
       </div>
     </div>
   );
