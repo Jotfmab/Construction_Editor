@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
-import type { ColDef, CellValueChangedEvent, GridApi } from "ag-grid-community";
+import type { ColDef, CellValueChangedEvent, GridApi, GridReadyEvent } from "ag-grid-community"; // Import GridReadyEvent
 import { api } from "../src/lib/api";
 
 // AG Grid (CSR only)
@@ -69,7 +69,6 @@ export default function Home() {
 
   // ---------- helpers ----------
   const validRange = useMemo(() => {
-    // don’t query while the user is mid-typing a bad value
     return (
       Number.isFinite(startDay) &&
       Number.isFinite(endDay) &&
@@ -93,14 +92,13 @@ export default function Home() {
 
   const loadBlock = useCallback(async () => {
     if (!sheetId || !section) return;
-    if (!validRange) return; // wait until inputs are valid
+    if (!validRange) return;
 
     try {
       setChanged(new Map());
       if (multi) {
         const subs = selectedSubs.length ? selectedSubs : (subsection ? [subsection] : []);
         const lists = await Promise.all(subs.map((s) => fetchBlock(s)));
-        // merge
         const merged: Record<number, BlockRow> = {};
         for (const list of lists) {
           for (const r of list) merged[r.row_id] = r;
@@ -150,8 +148,8 @@ export default function Home() {
   }, [startDay, endDay]);
 
   // ---------- grid events ----------
-  const onGridReady = useCallback((params: { api: GridApi<BlockRow> }) => {
-    gridApiRef.current = params.api;
+  const onGridReady = useCallback((event: GridReadyEvent<BlockRow>) => {
+    gridApiRef.current = event.api;
   }, []);
 
   const onCellValueChanged = useCallback(
@@ -183,7 +181,6 @@ export default function Home() {
   );
 
   const saveChanges = useCallback(async () => {
-    // make sure the grid commits the current edit before we read the buffer
     gridApiRef.current?.stopEditing();
 
     if (changed.size === 0) {
