@@ -1,0 +1,24 @@
+{
+  "name": "construction-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "ag-grid-community": "^32.3.2",
+    "ag-grid-react": "^32.3.2",
+    "axios": "1.7.2",
+    "next": "14.2.5",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "20.14.9",
+    "@types/react": "18.2.66",
+    "@types/react-dom": "18.2.21",
+    "typescript": "5.5.3"
+  }
+}

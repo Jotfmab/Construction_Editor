@@ -1,0 +1,3 @@
+/* frontend/styles/globals.css */
+html, body, #__next { height: 100%; margin: 0; }
+.ag-theme-quartz { --ag-font-size: 14px; }
