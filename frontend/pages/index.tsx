@@ -1,19 +1,20 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
-import type { ColDef, CellValueChangedEvent, GridApi, GridReadyEvent } from "ag-grid-community"; // Import GridReadyEvent
+import type { ColDef, CellValueChangedEvent, GridApi, GridReadyEvent } from "ag-grid-community";
+import { AgGridReact as AgGridReactType } from "ag-grid-react";
 import { api } from "../src/lib/api";
-
-// AG Grid (CSR only)
-const AgGridReact = dynamic(
-  () => import("ag-grid-react").then((m) => m.AgGridReact),
-  { ssr: false }
-);
 
 type BlockRow = {
   row_id: number;
   subsection: string;
   [key: string]: any; // day_X_task, day_X_time, day_X_labor
 };
+
+// Create a correctly typed version of the AgGridReact component
+const AgGridReact = dynamic(
+  () => import("ag-grid-react").then((mod) => mod.AgGridReact),
+  { ssr: false }
+) as unknown as React.ComponentType<AgGridReactType<BlockRow>>;
 
 export default function Home() {
   // --------- selectors ----------
