@@ -318,7 +318,8 @@ export default function Home() {
       </div>
 
       <div className="ag-theme-quartz" style={{ height: "70vh", marginTop: 12 }}>
-        <AgGridReact<BlockRow>
+        {/* // @ts-ignore */}
+        <AgGridReact
           rowData={rows}
           columnDefs={columnDefs}
           defaultColDef={{ resizable: true, sortable: true }}
