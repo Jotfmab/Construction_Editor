@@ -1,10 +1,11 @@
 # backend/models.py
 from sqlalchemy import (
     Column, Integer, String, Float, ForeignKey,
-    UniqueConstraint, Index
+    UniqueConstraint, Index, DateTime, Text
 )
 from sqlalchemy.orm import relationship
-from db import Base  # we defined Base in db.py
+from sqlalchemy.sql import func
+from db import Base
 
 # Using ORM classes that map to the tables
 
@@ -12,6 +13,7 @@ class Sheet(Base):
     __tablename__ = "sheets"
     id = Column(Integer, primary_key=True)
     name = Column(String(255), unique=True, nullable=False, index=True)
+    created_at = Column(DateTime, server_default=func.now())
     rows = relationship("Row", back_populates="sheet", cascade="all, delete-orphan")
 
 class Row(Base):
@@ -44,3 +46,11 @@ class DayCell(Base):
         UniqueConstraint("row_id", "day", name="uq_day_cells_row_day"),
         Index("ix_day_cells_row_day", "row_id", "day"),
     )
+
+class AuditLog(Base):
+    __tablename__ = "audit_log"
+    id = Column(Integer, primary_key=True)
+    op = Column(String(32), index=True)
+    obj = Column(String(32), index=True)
+    meta = Column(Text)
+    created_at = Column(DateTime, server_default=func.now())
