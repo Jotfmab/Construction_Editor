@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import type { ColDef, CellValueChangedEvent, GridApi, GridReadyEvent } from "ag-grid-community";
-import { api } from "../lib/api";
+import { api } from "../src/lib/api";
 
 // AG Grid (CSR only)
 const AgGridReact = dynamic(
@@ -318,7 +318,7 @@ export default function Home() {
       </div>
 
       <div className="ag-theme-quartz" style={{ height: "70vh", marginTop: 12 }}>
-        <AgGridReact
+        <AgGridReact<BlockRow>
           rowData={rows}
           columnDefs={columnDefs}
           defaultColDef={{ resizable: true, sortable: true }}
