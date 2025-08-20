@@ -1,39 +1,46 @@
 # backend/models.py
 from sqlalchemy import (
-    Table, Column, Integer, String, Float, ForeignKey,
+    Column, Integer, String, Float, ForeignKey,
     UniqueConstraint, Index
 )
+from sqlalchemy.orm import relationship
 from db import Base  # we defined Base in db.py
 
-# We keep using Core-style Table objects with Base.metadata
+# Using ORM classes that map to the tables
 
-sheets = Table(
-    "sheets",
-    Base.metadata,
-    Column("id", Integer, primary_key=True),
-    Column("name", String(255), unique=True, nullable=False, index=True),
-)
+class Sheet(Base):
+    __tablename__ = "sheets"
+    id = Column(Integer, primary_key=True)
+    name = Column(String(255), unique=True, nullable=False, index=True)
+    rows = relationship("Row", back_populates="sheet", cascade="all, delete-orphan")
 
-rows = Table(
-    "rows",
-    Base.metadata,
-    Column("id", Integer, primary_key=True),
-    Column("sheet_id", Integer, ForeignKey("sheets.id", ondelete="CASCADE"), nullable=False, index=True),
-    Column("section", String(255)),
-    Column("subsection", String(255)),
-    Column("row_order", Integer, default=0, index=True),
-    Index("ix_rows_sheet_section_subsection", "sheet_id", "section", "subsection"),
-)
+class Row(Base):
+    __tablename__ = "rows"
+    id = Column(Integer, primary_key=True)
+    sheet_id = Column(Integer, ForeignKey("sheets.id", ondelete="CASCADE"), nullable=False, index=True)
+    section = Column(String(255))
+    subsection = Column(String(255))
+    row_order = Column(Integer, default=0, index=True)
 
-day_cells = Table(
-    "day_cells",
-    Base.metadata,
-    Column("id", Integer, primary_key=True),
-    Column("row_id", Integer, ForeignKey("rows.id", ondelete="CASCADE"), nullable=False, index=True),
-    Column("day", Integer, nullable=False),
-    Column("task", String(255)),
-    Column("hours", Float),
-    Column("labor_code", String(16)),
-    UniqueConstraint("row_id", "day", name="uq_day_cells_row_day"),
-    Index("ix_day_cells_row_day", "row_id", "day"),
-)
+    sheet = relationship("Sheet", back_populates="rows")
+    day_cells = relationship("DayCell", back_populates="row", cascade="all, delete-orphan")
+
+    __table_args__ = (
+        Index("ix_rows_sheet_section_subsection", "sheet_id", "section", "subsection"),
+    )
+
+class DayCell(Base):
+    __tablename__ = "day_cells"
+    id = Column(Integer, primary_key=True)
+    row_id = Column(Integer, ForeignKey("rows.id", ondelete="CASCADE"), nullable=False, index=True)
+    day = Column(Integer, nullable=False)
+    task = Column(String(255))
+    hours = Column(Float)
+    labor_code = Column(String(16))
+
+    row = relationship("Row", back_populates="day_cells")
+
+    __table_args__ = (
+        UniqueConstraint("row_id", "day", name="uq_day_cells_row_day"),
+        Index("ix_day_cells_row_day", "row_id", "day"),
+    )
