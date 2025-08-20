@@ -318,7 +318,6 @@ export default function Home() {
       </div>
 
       <div className="ag-theme-quartz" style={{ height: "70vh", marginTop: 12 }}>
-        {/* @ts-expect-error Server-side rendering mismatch caused by dynamic import, safe to ignore. */}
         <AgGridReact
           rowData={rows}
           columnDefs={columnDefs}
