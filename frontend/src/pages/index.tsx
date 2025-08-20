@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import type { ColDef, CellValueChangedEvent, GridApi, GridReadyEvent } from "ag-grid-community";
-import { api } from "../src/lib/api";
+import { api } from "../lib/api";
 
 // AG Grid (CSR only)
 const AgGridReact = dynamic(
