@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "ignoreBuildErrors": true,
     "target": "ES2021",
     "lib": [
       "dom",
